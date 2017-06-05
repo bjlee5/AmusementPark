@@ -10,19 +10,19 @@ import UIKit
 
 class PassGenerator: UIViewController {
     
-    var passType = String()
-    var passFirstName = String()
-    var passLastName = String()
+    var passGuestType: GuestType!
+    var passFirstName: String = ""
+    var passLastName: String = ""
     var passAddress = String()
     var passCity = String()
     var passState = String()
     var passZip = String()
     var passAge = String()
+    var personPassed: Person!
+
     
     // Default values for Pass Guest
     
-    var passGuest = Guest(type: .classicGuest, firstName: "", lastName: "", address: "", city: "", state: "", zipCode: 00000, birthday: "")
-    var passEmployee = Employee(type: .hourlyFood, firstName: "", lastName: "", address: "", city: "", state: "", zipCode: 00000, birthday: "")
     
     @IBOutlet weak var typeLabel: UILabel!
     @IBOutlet weak var firstNameLabel: UILabel!
@@ -32,29 +32,53 @@ class PassGenerator: UIViewController {
     @IBOutlet weak var stateLabel: UILabel!
     @IBOutlet weak var zipLabel: UILabel!
     @IBOutlet weak var ageLabel: UILabel!
+    @IBOutlet weak var testResultsView: UIView!
+    @IBOutlet weak var testResultsLabel: UILabel!
+    @IBOutlet weak var foodDiscountLabel: UILabel!
+    @IBOutlet weak var merchDiscountLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        swipePass(for: passGuest)
+        print("Guest Type - \(passGuestType)")
+        
+        typeLabel.text = passGuestType.rawValue
+        firstNameLabel.text = passFirstName
+        lastNameLabel.text = passLastName
+        
+        foodDiscountLabel.text = "•\(passGuestType.foodDiscount)% Food Discount"
+        merchDiscountLabel.text = "•\(passGuestType.merchDiscount)% Merch Discount"
+        
+        personPassed = Person(type: passGuestType, firstName: passFirstName, lastName: passLastName, address: passAddress, city: passCity, state: passState, zipCode: passZip, birthday: passAge)
         
     }
     
-    ///////// ACCESS FUNCTIONS //////////
+    // MARK: - Access Functions 
     
     
     func amusementParkAccess(for guest: Person) {
         let accessLevel = guest.amusementAccess
         if accessLevel == true {
             print("Park Access granted!")
+            testResultsView.backgroundColor = UIColor.green
+            testResultsLabel.text = "Access Granted"
+        } else {
+            testResultsView.backgroundColor = UIColor.red
+            testResultsLabel.text = "Access Denied"
         }
     }
     
-    func rideAccess(for guest: Person) {
-        let accessLevel = guest.rideAccess
-        if accessLevel == true {
-            print("Ride Access granted!")
+    func showRideAccess(for guest: Person) -> Bool {
+        let rideAccess = guest.type.rideAccess
+        print("Ride Access: \(rideAccess)")
+        if rideAccess == true {
+            testResultsView.backgroundColor = UIColor.green
+            testResultsLabel.text = "Access Granted"
+        } else {
+            testResultsView.backgroundColor = UIColor.red
+            testResultsLabel.text = "Access Denied"
         }
+        return rideAccess
     }
     
     func showFoodDiscount(for guest: Person) -> Int {
@@ -73,9 +97,11 @@ class PassGenerator: UIViewController {
         let kitchenAccess = guest.type.kitchenAccess
         print("Kitchen Access: \(kitchenAccess)")
         if kitchenAccess == true {
-            print("Kitchen Access granted!")
+            testResultsView.backgroundColor = UIColor.green
+            testResultsLabel.text = "Access Granted"
         } else {
-            print("Kitchen Access denied!")
+            testResultsView.backgroundColor = UIColor.red
+            testResultsLabel.text = "Access Denied"
         }
         return kitchenAccess
     }
@@ -84,9 +110,11 @@ class PassGenerator: UIViewController {
         let rideControlAccess = guest.type.rideControlAccess
         print("Ride Control Access: \(rideControlAccess)")
         if rideControlAccess == true {
-            print("Ride Control Access granted!")
+            testResultsView.backgroundColor = UIColor.green
+            testResultsLabel.text = "Access Granted"
         } else {
-            print("Ride Control Access denied!")
+            testResultsView.backgroundColor = UIColor.red
+            testResultsLabel.text = "Access Denied"
         }
         return rideControlAccess
     }
@@ -95,9 +123,11 @@ class PassGenerator: UIViewController {
         let maintenanceAccess = guest.type.maintenanceAccess
         print("Maintenance Access: \(maintenanceAccess)")
         if maintenanceAccess == true {
-            print("Maintenance Area Access granted!")
+            testResultsView.backgroundColor = UIColor.green
+            testResultsLabel.text = "Access Granted"
         } else {
-            print("Maintenance Area Access denied!")
+            testResultsView.backgroundColor = UIColor.red
+            testResultsLabel.text = "Access Denied"
         }
         return maintenanceAccess
     }
@@ -106,23 +136,71 @@ class PassGenerator: UIViewController {
         let officeAccess = guest.type.officeAccess
         print("Office Access: \(officeAccess)")
         if officeAccess == true {
-            print("Office Access granted!")
+            testResultsView.backgroundColor = UIColor.green
+            testResultsLabel.text = "Access Granted"
         } else {
-            print("Office Access denied!")
+            testResultsView.backgroundColor = UIColor.red
+            testResultsLabel.text = "Access Denied"
         }
         return officeAccess
     }
     
-    func swipePass(for guest: Person) {
-        amusementParkAccess(for: guest)
-        showFoodDiscount(for: guest)
-        showMerchDiscount(for: guest)
-        rideAccess(for: guest)
-        showKitchenAccess(for: guest)
-        showRideControlAccess(for: guest)
-        showMaintenanceAccess(for: guest)
-        showofficeAccess(for: guest)
-        
+    func skipLinePrivledge(for guest: Person) -> Bool {
+        let skipLines = guest.type.canSkipLines
+        print("Office Access: \(skipLines)")
+        if skipLines == true {
+            testResultsView.backgroundColor = UIColor.green
+            testResultsLabel.text = "Access Granted"
+        } else {
+            testResultsView.backgroundColor = UIColor.red
+            testResultsLabel.text = "Access Denied"
+        }
+        return skipLines
+    }
+
+    
+//    func swipePass(for guest: Person) {
+//        amusementParkAccess(for: guest)
+//        showFoodDiscount(for: guest)
+//        showMerchDiscount(for: guest)
+//        rideAccess(for: guest)
+//        showKitchenAccess(for: guest)
+//        showRideControlAccess(for: guest)
+//        showMaintenanceAccess(for: guest)
+//        showofficeAccess(for: guest)
+//        
+//    }
+    
+    // MARK: - Actions 
+    
+    @IBAction func amusementAccessTest(_ sender: Any) {
+        amusementParkAccess(for: personPassed)
+    }
+    @IBAction func kitchenAccessTest(_ sender: Any) {
+        showKitchenAccess(for: personPassed)
+    }
+    @IBAction func rideControlAccessTest(_ sender: Any) {
+        showRideControlAccess(for: personPassed)
+    }
+    @IBAction func officeAccess(_ sender: Any) {
+        showofficeAccess(for: personPassed)
+    }
+    @IBAction func maintenanceAccess(_ sender: Any) {
+        showMaintenanceAccess(for: personPassed)
+    }
+    @IBAction func rideAccess(_ sender: Any) {
+        showRideAccess(for: personPassed)
+    }
+    
+    @IBAction func discountTotal(_ sender: Any) {
+        testResultsLabel.text = "\(passGuestType.foodDiscount)% Food Discount & \(passGuestType.merchDiscount)% Merch Discount"
+        testResultsView.backgroundColor = UIColor.lightGray
+    }
+    @IBAction func skipLines(_ sender: Any) {
+        skipLinePrivledge(for: personPassed)
+    }
+    @IBAction func createNewPass(_ sender: Any) {
+            performSegue(withIdentifier: "PassGenerator", sender: self)
     }
 
 }
